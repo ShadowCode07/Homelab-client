@@ -1,0 +1,7 @@
+{
+  "name": "homelabclient",
+  "version-string": "0.1",
+  "dependencies": [
+    "paho-mqttpp3"
+  ]
+}
