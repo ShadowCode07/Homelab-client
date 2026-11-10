@@ -13,7 +13,9 @@ set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 find_package(PahoMqttCpp CONFIG REQUIRED)
 
-add_executable(HomelabClient)
+add_executable(HomelabClient
+		src/publish.cpp
+		src/publish.h)
 
 file(GLOB_RECURSE HomelabClient_SOURCES	CONFIGURE_DEPENDS
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
