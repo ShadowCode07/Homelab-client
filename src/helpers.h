@@ -2,22 +2,13 @@
 // Created by plamen on 11/10/26.
 //
 
-#ifndef HOMELABCLIENT_PUBLISH_H
-#define HOMELABCLIENT_PUBLISH_H
+#ifndef HOMELABCLIENT_HELPERS_H
+#define HOMELABCLIENT_HELPERS_H
 
 #include <atomic>
-#include <chrono>
-#include <cstdlib>
-#include <cstring>
-#include <iostream>
-#include <thread>
 #include <string>
 
 #include "mqtt/async_client.h"
-
-class publish {
-
-};
 
 class callback : public virtual mqtt::callback {
 public:
@@ -60,4 +51,4 @@ public:
     bool is_done() const { return done_; }
 };
 
-#endif //HOMELABCLIENT_PUBLISH_H
+#endif //HOMELABCLIENT_HELPERS_H
