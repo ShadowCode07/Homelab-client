@@ -74,3 +74,6 @@ ipch/
 *.scc
 
 build/
+out/
+
+.idea
