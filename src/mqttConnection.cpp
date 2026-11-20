@@ -1,14 +1,20 @@
 #include "mqttConnection.h"
 
-mqttConnection::mqttConnection(const std::string &serverUri, const std::string &clientId)
-    : mqttClient{serverUri, clientId} {
+mqttConnection::mqttConnection(const std::string& serverUri, const std::string& clientId)
+    : mqttClient{serverUri, clientId},
+      statusTopic{"homelab/" + clientId + "/status"} {
     mqttClient.set_callback(cb);
+    mqttClient.set_connected_handler([this](const std::string&) {
+        std::cout << "Connected, publishing online" << std::endl;
+        mqttClient.publish(statusTopic, ONLINE_PAYLOAD, QOS, true);
+    });
     connOpts = mqtt::connect_options_builder()
-            .connect_timeout(TIMEOUT)
-            .clean_session()
-            .keep_alive_interval(std::chrono::seconds(10))
-            .will(mqtt::message(TOPIC, LTW_PAYLOAD, QOS, true))
-            .finalize();
+        .connect_timeout(TIMEOUT)
+        .clean_session()
+        .keep_alive_interval(std::chrono::seconds(10))
+        .automatic_reconnect(std::chrono::seconds(1), std::chrono::seconds(30))
+        .will(mqtt::message(statusTopic, LTW_PAYLOAD, QOS, true))
+        .finalize();
 }
 
 void mqttConnection::connect() {

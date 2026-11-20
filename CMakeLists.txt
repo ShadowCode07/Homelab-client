@@ -12,35 +12,27 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 find_package(PahoMqttCpp CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
-add_executable(HomelabClient
+# Sources are listed explicitly: add new files here.
+set(HomelabClient_SOURCES
+		src/main.cpp
 		src/mqttConnection.cpp
 		src/mqttConnection.h
-		src/helpers.h)
-
-file(GLOB_RECURSE HomelabClient_SOURCES	CONFIGURE_DEPENDS
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp"
-	"${CMAKE_CURRENT_SOURCE_DIR}/src/*.inl"
+		src/helpers.h
+		src/agentConfig.cpp
+		src/agentConfig.h
 )
 
-target_sources(HomelabClient PRIVATE ${HomelabClient_SOURCES})
+add_executable(HomelabClient ${HomelabClient_SOURCES})
 
 target_include_directories(HomelabClient PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-target_compile_definitions(HomelabClient PRIVATE
-	MY_TEST_DEFINE
-)
-
 target_link_libraries(HomelabClient PRIVATE
-	PahoMqttCpp::paho-mqttpp3
-)
-
-target_link_directories(HomelabClient PRIVATE
-
+		PahoMqttCpp::paho-mqttpp3
+		nlohmann_json::nlohmann_json
 )
 
 if(MSVC)

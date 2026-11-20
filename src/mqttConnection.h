@@ -11,9 +11,7 @@
 #include "helpers.h"
 #include "mqtt/async_client.h"
 
-const std::string DEVICE_ID{"deviceId"};
-const std::string TOPIC{"homelab/" + DEVICE_ID + "/status"};
-
+const std::string ONLINE_PAYLOAD{"online"};
 const std::string LTW_PAYLOAD{"offline"};
 
 const int QOS = 1;
@@ -26,11 +24,14 @@ public:
     void connect();
     void disconnect();
 
+    const std::string& topic() const {return statusTopic;}
     bool publish(const std::string& topic, const std::string& payload, bool retain = true);
 private:
     callback cb;
     mqtt::async_client mqttClient;
     mqtt::connect_options connOpts;
+
+    std::string statusTopic;
 };
 
 

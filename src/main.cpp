@@ -1,32 +1,41 @@
+#include <atomic>
 #include <chrono>
+#include <thread>
+#include <csignal>
 #include <iostream>
 #include <string>
 
 #include "mqttConnection.h"
+#include "agentConfig.h"
 
-const std::string DFLT_SERVER_URI{"mqtt://localhost:1883"};
-const std::string PAYLOAD{"online"};
-
+std::atomic<bool> running {true};
+void onSignal(int) {
+    running = false;
+}
 
 int main (int argc, char* argv[]) {
-    std::string serverURI = (argc > 1) ? std::string{argv[1]} : DFLT_SERVER_URI;
+    std::signal(SIGINT, onSignal);
+    std::signal(SIGTERM, onSignal);
 
-    std::cout << "Initializing connection to " << serverURI << std::endl;
+    std::string configPath = (argc > 1) ? argv[1] : "agent.json";
+
+    std::cout << "Initializing connection to server" << std::endl;
 
     try {
-        mqttConnection MqttConnection(serverURI, DEVICE_ID);
+        AgentConfig cfg = loadConfig(configPath);
+        std::string serverURI = "mqtt://" + cfg.brokerHost + ":" + std::to_string(cfg.brokerPort);
+
+        mqttConnection MqttConnection(serverURI, cfg.deviceId);
         MqttConnection.connect();
 
-        std::cout << "\nSending next message..." << std::endl;
-
-        if (!MqttConnection.publish(TOPIC, PAYLOAD, true)) {
-            std::cerr << "Not confirmed@" << std::endl;
+        std::cout << "Running. Press Ctrl+C to stop." << std::endl;
+        while (running) {
+            // TODO: telemetry (separate topic, non-retained) goes here
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
 
-        std::cin.get();
 
-
-        if (!MqttConnection.publish(TOPIC, LTW_PAYLOAD, true)) {
+        if (!MqttConnection.publish(MqttConnection.topic(), LTW_PAYLOAD, true)) {
             std::cerr << "offline not confirmed" << std::endl;
         }
 
@@ -35,8 +44,8 @@ int main (int argc, char* argv[]) {
         MqttConnection.disconnect();
         std::cout << "  ...OK" << std::endl;
     }
-    catch (const mqtt::exception& exc) {
-        std::cerr << exc.what() << std::endl;
+    catch (const std::exception& exc) {
+        std::cerr << "Error: " << exc.what() << std::endl;
         return 1;
     }
 
