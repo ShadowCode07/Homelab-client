@@ -1,5 +1,6 @@
 {
   "brokerHost": "localhost",
   "brokerPort": 1883,
-  "deviceId": "00000000-0000-0000-0000-000000000000"
+  "deviceId": "00000000-0000-0000-0000-000000000000",
+  "drivesPaths" : []
 }

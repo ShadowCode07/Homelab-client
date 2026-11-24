@@ -29,5 +29,8 @@ AgentConfig loadConfig(const std::string& configFile) {
     if (!std::regex_match(cfg.deviceId, guidPattern))
         throw std::runtime_error(configFile + ": 'deviceId' must be a GUID (copy it from the device page in the UI)");
 
+    if (j.contains("drivesPaths"))
+        cfg.drivesPaths = j.at("drivesPaths").get<std::vector<std::string>>();
+
     return cfg;
 }

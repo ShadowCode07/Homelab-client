@@ -33,6 +33,21 @@ int main (int argc, char* argv[]) {
         AgentConfig cfg = loadConfig(configPath);
         std::string serverURI = "mqtt://" + cfg.brokerHost + ":" + std::to_string(cfg.brokerPort);
 
+        std::vector<std::string> drivesPaths = cfg.drivesPaths;
+
+        if (drivesPaths.empty()) {
+            auto automaticPathSearch = listDiskMounts();
+            if (automaticPathSearch && !automaticPathSearch->empty()) {
+                drivesPaths = automaticPathSearch.value();
+            }
+            else
+                std::cerr << "No drivesPaths found" << std::endl;
+        }
+
+        for (auto drivePath : drivesPaths) {
+            std::cout << drivePath << std::endl;
+        }
+
         mqttConnection MqttConnection(serverURI, cfg.deviceId);
         MqttConnection.connect();
 

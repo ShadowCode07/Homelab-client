@@ -6,11 +6,13 @@
 #define HOMELABCLIENT_AGENTCONFIG_H
 
 #include<string>
+#include <vector>
 
 struct AgentConfig {
     std::string brokerHost = "localhost";
     int brokerPort = 1883;
     std::string deviceId;
+    std::vector<std::string> drivesPaths;
 };
 
 AgentConfig loadConfig(const std::string& configFile);
