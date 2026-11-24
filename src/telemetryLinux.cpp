@@ -27,3 +27,38 @@ std::optional<CpuTimes> readCpuTimes() {
     CpuTimes readings {idleTime, totalTime};
     return readings;
 }
+
+std::optional<MemInfo> readMemInfo() {
+    std::ifstream memInfoFile("/proc/meminfo");
+
+    if (!memInfoFile.is_open())
+        return std::nullopt;
+
+    std::string memLine;
+    bool totalFlag = false, availableFlag = false;
+    std::uint64_t totalBytes = 0, availableBytes = 0;
+
+    while (std::getline(memInfoFile, memLine)) {
+        std::istringstream in(memLine);
+        std::string name;
+        std::uint64_t kbytes = 0;
+        in >> name >> kbytes;
+        if (name == "MemTotal:") {
+            totalBytes = kbytes * 1024;
+            totalFlag = true;
+        }
+        else if (name == "MemAvailable:") {
+            availableBytes = kbytes * 1024;
+            availableFlag = true;
+        }
+
+        if (totalFlag && availableFlag)
+            break;
+    }
+
+    if (!totalFlag || !availableFlag)
+        return std::nullopt;
+
+    MemInfo memInfo {totalBytes, availableBytes};
+    return memInfo;
+}

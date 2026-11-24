@@ -24,7 +24,7 @@ std::optional<MemInfo> readMemInfo();
 
 std::optional<std::uint64_t> readUptimeSeconds();
 
-double cpuPercent(const CpuTimes& prev, const CpuTimes& curr);
+std::optional<double> cpuPercent(const CpuTimes& prev, const CpuTimes& curr);
 
 std::optional<DiskInfo> readDiskInfo(const std::string& path);
 
