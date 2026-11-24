@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <unordered_set>
 
 std::optional<CpuTimes> readCpuTimes() {
     std::ifstream cpuTimesFile("/proc/stat");
@@ -80,4 +81,37 @@ std::optional<std::uint64_t> readUptimeSeconds() {
         return std::nullopt;
 
     return static_cast<std::uint64_t>(uptime);
+}
+
+std::optional<std::vector<std::string>> listDiskMounts() {
+    std::ifstream diskInfoFile("/proc/mounts");
+
+    if (!diskInfoFile.is_open())
+        return std::nullopt;
+
+    const std::unordered_set<std::string> networkFs{"nfs", "nfs4", "cifs", "zfs"};
+
+    std::string diskLine;
+    std::vector<std::string> paths;
+    std::unordered_set<std::string> seenDevices;
+
+    while (getline(diskInfoFile, diskLine)) {
+        std::istringstream in(diskLine);
+        std::string device, mountpoint, fs;
+        in >> device >> mountpoint >> fs;
+
+        if (!device.starts_with("/dev/") && !networkFs.contains(fs))
+            continue;
+
+        if (device.starts_with("/dev/loop"))
+            continue;
+
+        if (seenDevices.contains(device))
+            continue;
+
+        seenDevices.insert(device);
+        paths.push_back(mountpoint);
+    }
+
+    return paths;
 }

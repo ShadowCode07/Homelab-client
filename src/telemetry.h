@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
 #include <optional>
 #include <string>
 
@@ -27,6 +28,7 @@ std::optional<std::uint64_t> readUptimeSeconds();
 std::optional<double> cpuPercent(const CpuTimes& prev, const CpuTimes& curr);
 
 std::optional<DiskInfo> readDiskInfo(const std::string& path);
+std::optional<std::vector<std::string>> listDiskMounts();
 
 
 

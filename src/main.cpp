@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 
-//#include "telemetry.h"
+#include "telemetry.h"
 #include "mqttConnection.h"
 #include "agentConfig.h"
 
@@ -22,6 +22,10 @@ int main (int argc, char* argv[]) {
 
     /*std::cout << "Idle Time " << readCpuTimes().value().idle << std::endl;
     std::cout << "Total Time " << readCpuTimes().value().total / 100 / 16 << std::endl;*/
+    /*auto mounts = listDiskMounts();
+    for (const auto& paths : *mounts) {
+        std::cout << paths << '\n';
+    }*/
 
     std::cout << "Initializing connection to server" << std::endl;
 
