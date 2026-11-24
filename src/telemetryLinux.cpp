@@ -62,3 +62,22 @@ std::optional<MemInfo> readMemInfo() {
     MemInfo memInfo {totalBytes, availableBytes};
     return memInfo;
 }
+
+std::optional<std::uint64_t> readUptimeSeconds() {
+    std::ifstream uptimeFile("/proc/uptime");
+
+    if (!uptimeFile.is_open())
+        return std::nullopt;
+
+    std::string line;
+    std::getline(uptimeFile, line);
+
+    std::istringstream in(line);
+    double uptime = 0;
+    in >> uptime;
+
+    if (!in)
+        return std::nullopt;
+
+    return static_cast<std::uint64_t>(uptime);
+}
