@@ -22,7 +22,20 @@ set(HomelabClient_SOURCES
 		src/helpers.h
 		src/agentConfig.cpp
 		src/agentConfig.h
+		src/telemetry.h
+		src/telemetryCommon.cpp
 )
+
+# Platform-specific telemetry: exactly one is compiled.
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	list(APPEND HomelabClient_SOURCES src/telemetryLinux.cpp)
+elseif(WIN32)
+	list(APPEND HomelabClient_SOURCES src/telemetryWindows.cpp)
+elseif(APPLE)
+	list(APPEND HomelabClient_SOURCES src/telemetryMacOS.cpp)
+else()
+	message(FATAL_ERROR "Telemetry not implemented for ${CMAKE_SYSTEM_NAME}")
+endif()
 
 add_executable(HomelabClient ${HomelabClient_SOURCES})
 

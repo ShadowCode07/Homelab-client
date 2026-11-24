@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 
+//#include "telemetry.h"
 #include "mqttConnection.h"
 #include "agentConfig.h"
 
@@ -18,6 +19,9 @@ int main (int argc, char* argv[]) {
     std::signal(SIGTERM, onSignal);
 
     std::string configPath = (argc > 1) ? argv[1] : "agent.json";
+
+    /*std::cout << "Idle Time " << readCpuTimes().value().idle << std::endl;
+    std::cout << "Total Time " << readCpuTimes().value().total / 100 / 16 << std::endl;*/
 
     std::cout << "Initializing connection to server" << std::endl;
 
